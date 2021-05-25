@@ -20,43 +20,54 @@ server.get('/', (req, res) => {
 
 
 server.get('/weather', (req, res) => {
-
-
+  let location=0;
+try
+{
 let dataRes= req.query.searchQuery
 
-
-let location = weatherData.find(item => {
+location = weatherData.find(item => {
   if(item.city_name === dataRes)
   {
-    console.log(item.city_name)
-    return item
     
+    return item
   }
-
-// console.log(item.city_name)
 }
-
-
 
 )
 
+let date;
+let description;
+let dataobj;
+let dataArr=[];
 
-
-if(location)
+location=location.data
+for(let i=0 ; i < weatherData.length;i++)
 {
-res.send(location)
+date=location[i].datetime
+description=`Low of  ${location[i].low_temp} , high of ${location[i].high_temp} with ${location[i].weather.description}`
+console.log(date)
+console.log(description)
+dataobj  = new Forecast(date, description);
+console.log(dataobj)
+dataArr.push(dataobj)
 }
-
-
-if(!location)
+// console.log(dataArr) 
+res.send(dataArr)
+}
+catch
 {
-res.send(404)
+  res.send('err')
 }
 
 
 })
 
-
+class Forecast {
+  constructor(date, description) {
+    this.date = date;
+    this.description = description;
+  }
+}
 
 
 server.listen(PORT, () => {
