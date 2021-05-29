@@ -1,5 +1,8 @@
 const axios = require('axios');
 
+let inMemory = {};
+
+
 //Enviroment key Weather API
 let movieKey = process.env.MOVIE_API_KEY
 //Class Movie 
@@ -20,6 +23,15 @@ class Movie {
     let movieName = req.query.searchQuery // Based on location , contains location
     let url = `https://api.themoviedb.org/3/search/movie?api_key=${movieKey}&query=${movieName}`;
 
+    if(inMemory[movieName] !== undefined)
+    {
+      console.log('test sound 2')
+        res.send(inMemory[movieName])
+    }
+
+    else
+    {
+
     axios
         .get(url)
         .then(result => {
@@ -28,9 +40,9 @@ class Movie {
             //loop over all the objects and save results as an object in the getData Array
             const getData = result.data.results.map(item => {
 
-
                 return new Movie(item);
             })
+            inMemory[movieName] = getData
             res.send(getData);
         })
         .catch(err => {
@@ -39,5 +51,6 @@ class Movie {
     //End of .then,.catch scoope..
 
 }
+ }
 
 module.exports = { Movie, HandleMovieReq };

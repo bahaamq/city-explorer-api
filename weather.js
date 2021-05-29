@@ -2,6 +2,7 @@ const axios = require('axios');
 
 //Enviroment key Weather API
 let weatherKey = process.env.WEATHER_API_KEY;
+let inMemory = {};
 
 //Class Weather
 class Weather {
@@ -19,6 +20,14 @@ HandleWeatherReq = (req, res) => {
     let dataRes = req.query.searchQuery
     let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${dataRes}&key=${weatherKey}`;
 
+
+    if(inMemory[dataRes] !== undefined)
+    {
+        console.log('test')
+        res.send(inMemory[dataRes])
+    }
+    else
+    {
     axios
         .get(url)
         .then(result => {
@@ -29,13 +38,16 @@ HandleWeatherReq = (req, res) => {
                 return new Weather(item)
 
             })
+            inMemory[dataRes]=getData
             res.send(getData);
         })
         .catch(err => {
             res.status(500).send(`error in retrive the data ==> ${err}`);
         })
+    }
+}
     //End of .then,.catch scoope..
 
-}
+
 
 module.exports = { Weather, HandleWeatherReq };
